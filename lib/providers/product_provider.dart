@@ -75,55 +75,57 @@ class ProductProvider with ChangeNotifier {
   // }
 
   void addProduct(Product prdct) {
-//     final url = Uri.parse(
-//         'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json'); //products.json - is a node
-//     http
-//         .post(url,
-//             body: json.encode({
-//               'title': prdct.title,
-//               'description': prdct.description,
-//               'imageUrl': prdct.imageUrl,
-//               'price': prdct.price,
-//               'imageUrl': prdct.imageUrl,
-//               'isFavorite': prdct.isFavorite,
-//               //first complete this post work after theat then will be elecute
-//             }))
-//         .then((response) {
-//       //above post request is complete then this then fuction will elecute
-//       //so when post request is done then only  we add a object to list
-//       print(response.body); //key id//print as map
-//       print(json.decode(response.body)); //it contians key id
-//       //newproduct is not add indetly //when push request is complete then this will added in to productlist
-//       final newproduct = Product(
-//         id: json.decode(response.body)['name'],//
-//         title: prdct.title,
-//         description: prdct.description,
-//         imageUrl: prdct.imageUrl,
-//         price: prdct.price,
-//         isFavorite: prdct.isFavorite,
-//       );
-//       print('info:${newproduct.id}');
-//       _items.add(newproduct); //insert at last
-//       //or
-//       // _items.insert(0, newproduct); //if we want to insert product at indext =
-//       notifyListeners();
-//     }); //header is nothing but meta data about request
-// //body mean main data which is atech with request
-// // /JSON: javaScript object notation //dataFormate
-    final newproduct = Product(
-      // id: json.decode(response.body)['name'],//
-      id: DateTime.now().toString(),
-      title: prdct.title,
-      description: prdct.description,
-      imageUrl: prdct.imageUrl,
-      price: prdct.price,
-      isFavorite: prdct.isFavorite,
-    );
-    print('info:${newproduct.id}');
-    _items.add(newproduct); //insert at last
-    //or
-    // _items.insert(0, newproduct); //if we want to insert product at indext =
-    notifyListeners();
+    final url = Uri.parse(
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json'); //products.json - is a node
+    http
+        .post(url,
+            body: json.encode({
+              'title': prdct.title,
+              'description': prdct.description,
+              'imageUrl': prdct.imageUrl,
+              'price': prdct.price,
+              'imageUrl': prdct.imageUrl,
+              'isFavorite': prdct.isFavorite,
+              //first complete this post work after theat then will be elecute
+            }))
+        .then((response) {
+      //above post request is complete then this then fuction will elecute
+      //so when post request is done then only  we add a object to list
+      print(response.body); //key id//print as map
+      print(json.decode(response.body)); //it contians key id
+      //newproduct is not add indetly //when push request is complete then this will added in to productlist
+      final newproduct = Product(
+        id: json.decode(response.body)['name'], //
+        title: prdct.title,
+        description: prdct.description,
+        imageUrl: prdct.imageUrl,
+        price: prdct.price,
+        isFavorite: prdct.isFavorite,
+      );
+      print('info:${newproduct.id}');
+      _items.add(newproduct); //insert at last
+      //or
+      // _items.insert(0, newproduct); //if we want to insert product at indext =
+      notifyListeners();
+    }); //header is nothing but meta data about request
+//body mean main data which is atech with request
+// /JSON: javaScript object notation //dataFormate
+
+//without firebase
+    // final newproduct = Product(
+    //   // id: json.decode(response.body)['name'],//
+    //   id: DateTime.now().toString(),
+    //   title: prdct.title,
+    //   description: prdct.description,
+    //   imageUrl: prdct.imageUrl,
+    //   price: prdct.price,
+    //   isFavorite: prdct.isFavorite,
+    // );
+    // print('info:${newproduct.id}');
+    // _items.add(newproduct); //insert at last
+    // //or
+    // // _items.insert(0, newproduct); //if we want to insert product at indext =
+    // notifyListeners();
   }
 
   void updateProduct(String id, Product newproduct) {
