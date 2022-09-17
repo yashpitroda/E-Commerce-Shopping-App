@@ -73,27 +73,87 @@ class ProductProvider with ChangeNotifier {
   //   _showFavoritesOnly = false;
   //   notifyListeners();
   // }
+//whithout async
+//   Future<void> addProduct(Product prdct) {
+//     // final url = Uri.parse(
+//     //     'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products'); //this time catcherror will run
+//     final url = Uri.parse(
+//         'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json'); //products.json - is a node
+//     return http
+//         .post(url,
+//             body: json.encode({
+//               'title': prdct.title,
+//               'description': prdct.description,
+//               'imageUrl': prdct.imageUrl,
+//               'price': prdct.price,
+//               'imageUrl': prdct.imageUrl,
+//               'isFavorite': prdct.isFavorite,
+//               //first complete this post work after theat then will be elecute
+//             }))
+//         .catchError((error) {
+//       print(error);
+//       throw error;
 
-  Future<void> addProduct(Product prdct) {
+//     }).then((response) {
+//       //above post request is complete then this then fuction will elecute
+//       //so when post request is done then only  we add a object to list
+//       print(response.body); //key id//print as map
+//       print(json.decode(response.body)); //it contians key id
+//       //newproduct is not add indetly //when push request is complete then this will added in to productlist
+//       final newproduct = Product(
+//         id: json.decode(response.body)['name'], //
+//         title: prdct.title,
+//         description: prdct.description,
+//         imageUrl: prdct.imageUrl,
+//         price: prdct.price,
+//         isFavorite: prdct.isFavorite,
+//       );
+//       print('info:${newproduct.id}');
+//       _items.add(newproduct); //insert at last
+//       //or
+//       // _items.insert(0, newproduct); //if we want to insert product at indext =
+//       notifyListeners();
+//     }); //header is nothing but meta data about request
+// //body mean main data which is atech with request
+// // /JSON: javaScript object notation //dataFormate
+
+// //without firebase
+//     // final newproduct = Product(
+//     //   // id: json.decode(response.body)['name'],//
+//     //   id: DateTime.now().toString(),
+//     //   title: prdct.title,
+//     //   description: prdct.description,
+//     //   imageUrl: prdct.imageUrl,
+//     //   price: prdct.price,
+//     //   isFavorite: prdct.isFavorite,
+//     // );
+//     // print('info:${newproduct.id}');
+//     // _items.add(newproduct); //insert at last
+//     // //or
+//     // // _items.insert(0, newproduct); //if we want to insert product at indext =
+//     // notifyListeners();
+//   }
+
+//with async
+  Future<void> addProduct(Product prdct) async {
+    //async is always retun future so do not need to write retrun
+    // final url = Uri.parse(
+    //     'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products'); //this time catcherror will run
     final url = Uri.parse(
         'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json'); //products.json - is a node
-    return http
-        .post(url,
-            body: json.encode({
-              'title': prdct.title,
-              'description': prdct.description,
-              'imageUrl': prdct.imageUrl,
-              'price': prdct.price,
-              'imageUrl': prdct.imageUrl,
-              'isFavorite': prdct.isFavorite,
-              //first complete this post work after theat then will be elecute
-            }))
-        .then((response) {
-      //above post request is complete then this then fuction will elecute
-      //so when post request is done then only  we add a object to list
-      print(response.body); //key id//print as map
-      print(json.decode(response.body)); //it contians key id
-      //newproduct is not add indetly //when push request is complete then this will added in to productlist
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode({
+          'title': prdct.title,
+          'description': prdct.description,
+          'imageUrl': prdct.imageUrl,
+          'price': prdct.price,
+          'imageUrl': prdct.imageUrl,
+          'isFavorite': prdct.isFavorite,
+        }),
+      );
+      //after taking response
       final newproduct = Product(
         id: json.decode(response.body)['name'], //
         title: prdct.title,
@@ -107,25 +167,11 @@ class ProductProvider with ChangeNotifier {
       //or
       // _items.insert(0, newproduct); //if we want to insert product at indext =
       notifyListeners();
-    }); //header is nothing but meta data about request
-//body mean main data which is atech with request
-// /JSON: javaScript object notation //dataFormate
-
-//without firebase
-    // final newproduct = Product(
-    //   // id: json.decode(response.body)['name'],//
-    //   id: DateTime.now().toString(),
-    //   title: prdct.title,
-    //   description: prdct.description,
-    //   imageUrl: prdct.imageUrl,
-    //   price: prdct.price,
-    //   isFavorite: prdct.isFavorite,
-    // );
-    // print('info:${newproduct.id}');
-    // _items.add(newproduct); //insert at last
-    // //or
-    // // _items.insert(0, newproduct); //if we want to insert product at indext =
-    // notifyListeners();
+    } catch (error) {
+      //if response throw error then this catch will execute
+      print(error);
+      throw error;
+    }
   }
 
   void updateProduct(String id, Product newproduct) {

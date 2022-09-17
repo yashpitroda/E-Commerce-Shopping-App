@@ -84,7 +84,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
+  Future<void> _saveForm() async {
     final _isvalid = _form.currentState!.validate();
     if (_isvalid == false) {
       //so do not need to save form
@@ -92,29 +92,41 @@ class _EditProductScreenState extends State<EditProductScreen> {
     } else {
       //if it is valid thaen save
       _form.currentState!.save();
-      // print(_editedProduct.title);
-      // print(_editedProduct.description);
-      // print(_editedProduct.price);
-      // print(_editedProduct.imageUrl);
-      // if(){
-
-      // }
       setState(() {
         _isloading =
             true; //when future fun addproduct is not complete at that time loading true
       });
-      Provider.of<ProductProvider>(context, listen: false)
-          .addProduct(_editedProduct)
-          .then((_) {
-        //_ mean no vlaue
+      try {
+        await Provider.of<ProductProvider>(context, listen: false)
+            .addProduct(_editedProduct); //because addproduct is a async and future fun so use await
+      } catch (error) {
+      await  showDialog(// showDialog is also future fuction
+            context: context,
+            builder: (ctx) {
+              return AlertDialog(
+                title: Text('A error occurred!'),
+                content: Text('somethings wents wrong.${error}'),
+                actions: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                    child: Text("okey"),
+                  ),
+                ],
+              );
+            });
+      } finally {
+        //if sucessed or fail no matter this cade will always be executed
         setState(() {
           _isloading =
               false; // future function of addProduct is completed then we do isloading is flase
         });
         Navigator.of(context).pop();
-      }); //here i am not changing the product
-      print("addProduct true");
+      }
 
+      //here i am not changing the product
+      print("addProduct true");
       //but only sumbmit data
     }
   }
