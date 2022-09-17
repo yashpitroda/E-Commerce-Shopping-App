@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 import 'package:shop_app/providers/product.dart';
 import 'package:http/http.dart' as http;
@@ -170,6 +172,18 @@ class ProductProvider with ChangeNotifier {
     } catch (error) {
       //if response throw error then this catch will execute
       print(error);
+      throw error;
+    }
+  }
+
+  Future<void> fatchAndsetProducts() async {
+    final url = Uri.parse(
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
+    try {
+      final response = await http.get(url);
+      print(response);
+      print(jsonDecode(response.body));
+    } catch (error) {
       throw error;
     }
   }

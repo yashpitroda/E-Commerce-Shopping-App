@@ -26,6 +26,30 @@ class ProductOverviewScreen extends StatefulWidget {
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   // final List<Product> loadedProductList = ;
   var _isShowOnlyfavorites = false;
+  var _isInit = true;
+  @override
+  void initState() {
+    //fatch data form firebase
+    //not optimal
+    // http.get(); //it is not batter aproch
+    //best aproch is fatching code is move to provider class //and hide form widgets and just all method in widgets and fatch the data
+    //optimal
+    //  Provider.of<ProductProvider>(context).fatchAndsetProducts();//it is future and void so do not store in to response //but context are not use in initstate -- we use didchangedi
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    //herre we can write context
+    //it si run after widget is fully inislize
+    if (_isInit) {
+      Provider.of<ProductProvider>(context).fatchAndsetProducts();
+    }
+    _isInit = false;
+    super.didChangeDependencies();
+  }
+
   Widget build(BuildContext context) {
     final productsContainer =
         Provider.of<ProductProvider>(context, listen: false);
