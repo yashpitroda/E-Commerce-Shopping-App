@@ -8,42 +8,24 @@ import 'dart:convert';
 class ProductProvider with ChangeNotifier {
   //ChangeNotifier is a widget which astablis comueniication b/w penal with the help of contex
   List<Product> _items = [
-    Product(
-      id: 'p1',
-      title: 'Red Shirt',
-      description: 'A red shirt - it is pretty red!',
-      price: 29.99,
-      imageUrl:
-          'https://cdn.pixabay.com/photo/2016/10/02/22/17/red-t-shirt-1710578_1280.jpg',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p2',
-      title: 'Trousers',
-      description: 'A nice pair of trousers.',
-      price: 59.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e8/Trousers%2C_dress_%28AM_1960.022-8%29.jpg/512px-Trousers%2C_dress_%28AM_1960.022-8%29.jpg',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p3',
-      title: 'Yellow Scarf',
-      description: 'Warm and cozy - exactly what you need for the winter.',
-      price: 19.99,
-      imageUrl:
-          'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
-      isFavorite: false,
-    ),
-    Product(
-      id: 'p4',
-      title: 'A Pan',
-      description: 'Prepare any meal you want.',
-      price: 49.99,
-      imageUrl:
-          'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
-      isFavorite: false,
-    ),
+    // Product(
+    //   id: 'p3',
+    //   title: 'Yellow Scarf',
+    //   description: 'Warm and cozy - exactly what you need for the winter.',
+    //   price: 19.99,
+    //   imageUrl:
+    //       'https://live.staticflickr.com/4043/4438260868_cc79b3369d_z.jpg',
+    //   isFavorite: false,
+    // ),
+    // Product(
+    //   id: 'p4',
+    //   title: 'A Pan',
+    //   description: 'Prepare any meal you want.',
+    //   price: 49.99,
+    //   imageUrl:
+    //       'https://upload.wikimedia.org/wikipedia/commons/thumb/1/14/Cast-Iron-Pan.jpg/1024px-Cast-Iron-Pan.jpg',
+    //   isFavorite: false,
+    // ),
   ];
   // var _showFavoritesOnly = false;
   List<Product> get items {
@@ -183,18 +165,47 @@ class ProductProvider with ChangeNotifier {
       final response = await http.get(url);
       print(response);
       print(jsonDecode(response.body));
+      final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+      final List<Product> loadedProducts = []; // temp list
+      extractedData.forEach((firebaseProKey, prodata) {
+        loadedProducts.add(
+          Product(
+              title: prodata['title'],
+              id: firebaseProKey,
+              description: prodata['description'],
+              price: prodata['price'],
+              imageUrl: prodata['imageUrl'],
+              isFavorite: prodata['isFavorite']),
+        );
+      });
+      _items = loadedProducts;
+      notifyListeners();
     } catch (error) {
       throw error;
     }
   }
+//whcen firebasekey is null at that time addproduct
+//whcen firebasekey is not null at that time mean item is already exsist at that time updateProduct
 
-  void updateProduct(String id, Product newproduct) {
+  Future<void> updateProduct(String id, Product newproduct) async {
     //  final prctobj=findById(id);
     //  final index=prctobj.
+    print('in updateProduct of provider : ${id}');
     final productindex = _items.indexWhere((element) {
       return element.id == id;
     });
+    print('pindex:${productindex}');
     if (productindex >= 0) {
+      final url = Uri.parse(
+          'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+      //patch -- update data
+      await http.patch(url,
+          body: json.encode({
+            'title': newproduct.title,
+            'description': newproduct.description,
+            'imageUrl': newproduct.imageUrl,
+            'price': newproduct.price,
+          }));
       _items[productindex] = newproduct;
       notifyListeners();
     } else {

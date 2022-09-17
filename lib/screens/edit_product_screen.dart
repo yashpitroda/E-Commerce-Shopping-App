@@ -27,7 +27,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _imageUrlFocusNode = FocusNode();
   final _form = GlobalKey<FormState>();
   var _editedProduct = Product(
-    id: '',
+    id: null,
     title: '',
     price: 0,
     description: '',
@@ -46,10 +46,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //for edit product data
     if (_isInit) {
       final productid = ModalRoute.of(context)?.settings.arguments;
-      if ((productid) != null) {
-        print("hhh");
-        final _editedProduct =
-            Provider.of<ProductProvider>(context).findById(productid as String);
+      print(productid);
+      if (productid != null) {
+        _editedProduct = Provider.of<ProductProvider>(context, listen: false)
+            .findById(productid as String);
         _initvalueMap = {
           'title': _editedProduct.title,
           'description': _editedProduct.description,
@@ -89,18 +89,27 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (_isvalid == false) {
       //so do not need to save form
       return;
+    }
+
+    //if it is valid thaen save
+    _form.currentState!.save();
+
+    setState(() {
+      _isloading =
+          true; //when future fun addproduct is not complete at that time loading true
+    });
+
+    if (_editedProduct.id != null) {
+      await Provider.of<ProductProvider>(context, listen: false)
+          .updateProduct(_editedProduct.id!, _editedProduct);
+      print('update Product true');
     } else {
-      //if it is valid thaen save
-      _form.currentState!.save();
-      setState(() {
-        _isloading =
-            true; //when future fun addproduct is not complete at that time loading true
-      });
       try {
-        await Provider.of<ProductProvider>(context, listen: false)
-            .addProduct(_editedProduct); //because addproduct is a async and future fun so use await
+        await Provider.of<ProductProvider>(context, listen: false).addProduct(
+            _editedProduct); //because addproduct is a async and future fun so use await
       } catch (error) {
-      await  showDialog(// showDialog is also future fuction
+        await showDialog(
+            // showDialog is also future fuction
             context: context,
             builder: (ctx) {
               return AlertDialog(
@@ -116,44 +125,22 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 ],
               );
             });
-      } finally {
-        //if sucessed or fail no matter this cade will always be executed
-        setState(() {
-          _isloading =
-              false; // future function of addProduct is completed then we do isloading is flase
-        });
-        Navigator.of(context).pop();
       }
-
-      //here i am not changing the product
-      print("addProduct true");
-      //but only sumbmit data
-    }
-  }
-
-  void _editForm() {
-    final _isvalid = _form.currentState!.validate();
-    if (_isvalid == false) {
-      //so do not need to save form
-      return;
-    } else {
-      //if it is valid thaen save
-      _form.currentState!.save();
-      // print(_editedProduct.title);
-      // print(_editedProduct.description);
-      // print(_editedProduct.price);
-      // print(_editedProduct.imageUrl);
-      // if(){
+      // finally {
+      //   //if sucessed or fail no matter this cade will always be executed
 
       // }
 
-      Provider.of<ProductProvider>(context, listen: false)
-          .updateProduct(_editedProduct.id, _editedProduct);
-      print("updateProduct true");
-
-      //but only sumbmit data
-      Navigator.of(context).pop();
     }
+    setState(() {
+      _isloading =
+          false; // future function of addProduct is completed then we do isloading is flase
+    });
+
+    Navigator.of(context).pop();
+    //here i am not changing the product
+    print("addProduct true");
+    //but only sumbmit data
   }
 
   @override
@@ -162,13 +149,6 @@ class _EditProductScreenState extends State<EditProductScreen> {
       appBar: AppBar(
         title: Text('Edit Product'),
         actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.edit_attributes_rounded),
-            // onPressed: _saveForm,
-            onPressed: () {
-              _editForm();
-            },
-          ),
           IconButton(
             icon: Icon(Icons.save),
             // onPressed: _saveForm,

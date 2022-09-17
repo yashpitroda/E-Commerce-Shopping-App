@@ -170,7 +170,7 @@ class ProductItem extends StatelessWidget {
             trailing: IconButton(
               icon: Icon(Icons.shopping_cart),
               onPressed: () {
-                cart.addItem(product_at_index.id, product_at_index.price,
+                cart.addItem(product_at_index.id!, product_at_index.price,
                     product_at_index.title);
                 // Scaffold.of(context).openDrawer();
                 // Scaffold.of(context)

@@ -27,6 +27,7 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   // final List<Product> loadedProductList = ;
   var _isShowOnlyfavorites = false;
   var _isInit = true;
+  var _isloading = true;
   @override
   void initState() {
     //fatch data form firebase
@@ -43,10 +44,19 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   void didChangeDependencies() {
     //herre we can write context
     //it si run after widget is fully inislize
+
     if (_isInit) {
-      Provider.of<ProductProvider>(context).fatchAndsetProducts();
+      setState(() {
+        _isloading = true;
+      });
+      Provider.of<ProductProvider>(context).fatchAndsetProducts().then((_) {
+        setState(() {
+          _isloading = false;
+        });
+      });
     }
     _isInit = false;
+
     super.didChangeDependencies();
   }
 
@@ -104,9 +114,13 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: ProductGrid(
-        showFav: _isShowOnlyfavorites,
-      ),
+      body: (_isloading)
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : ProductGrid(
+              showFav: _isShowOnlyfavorites,
+            ),
     );
   }
 }
