@@ -28,10 +28,10 @@ class _OrderItemWidgetState extends State<OrderItemWidget> {
                   : '\$${widget.order.amount}',
               style: TextStyle(fontSize: 19, fontWeight: FontWeight.w600),
             ),
-            // subtitle: Text(
-            //   // DateFormat('dd MM yyyy hh:mm').format(order.dateTime),
-            //   // order.dateTime.toString(),
-            // ),
+            subtitle: Text(
+              // DateFormat('dd MM yyyy hh:mm').format(order.dateTime),
+              widget.order.dateTime.toIso8601String(),
+            ),
             trailing: IconButton(
               icon: Icon(_isexpanded ? Icons.expand_less : Icons.expand_more),
               onPressed: () {

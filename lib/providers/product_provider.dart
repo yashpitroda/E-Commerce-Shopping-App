@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 
 import 'package:flutter/material.dart';
 import 'package:shop_app/models/http_exception.dart';
@@ -140,7 +140,7 @@ class ProductProvider with ChangeNotifier {
       );
       //after taking response
       final newproduct = Product(
-        id: json.decode(response.body)['name'], //
+        id: json.decode(response.body)['name'], //firebasekey
         title: prdct.title,
         description: prdct.description,
         imageUrl: prdct.imageUrl,
@@ -161,27 +161,50 @@ class ProductProvider with ChangeNotifier {
 
   Future<void> fatchAndsetProducts() async {
     final url = Uri.parse(
+        // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
         'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
     try {
-      final response = await http.get(url);
-      print(response);
-      print(jsonDecode(response.body));
-      final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
-      final List<Product> loadedProducts = []; // temp list
-      extractedData.forEach((firebaseProKey, prodata) {
-        loadedProducts.add(
-          Product(
-              title: prodata['title'],
-              id: firebaseProKey,
-              description: prodata['description'],
-              price: prodata['price'],
-              imageUrl: prodata['imageUrl'],
-              isFavorite: prodata['isFavorite']),
-        );
-      });
-      _items = loadedProducts;
-      notifyListeners();
+    final response = await http.get(url);
+    print(response);
+    print(response.body);
+    if (response.body == 'null') {
+      //response.body has no value but as a string 'null'
+      //mean firebse is empty
+      print('its products retruns data is not avalible in firebase server');
+      return;
+    }
+    print(jsonDecode(response.body));
+    final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
+    //   if (extractedData == null) {
+    //   return;
+    // }
+    print('it hapan');
+    print(response.statusCode);
+    print(response.persistentConnection);
+    print(response.isRedirect);
+    final List<Product> loadedProducts = []; // temp list
+    extractedData.forEach((firebaseProKey, prodata) {
+      print(firebaseProKey);
+
+      loadedProducts.add(
+        Product(
+            title: prodata['title'],
+            id: firebaseProKey,
+            description: prodata['description'],
+            // price: double.parse(prodata['price'].toString()) ,
+            price: prodata['price'].toDouble(),
+            imageUrl: prodata['imageUrl'],
+            isFavorite: prodata['isFavorite']),
+      );
+      print(prodata['price'].runtimeType);
+      
+      print('do');
+    });
+    print('it 2 hapan');
+    _items = loadedProducts;
+    notifyListeners();
     } catch (error) {
+      print(error);
       throw error;
     }
   }

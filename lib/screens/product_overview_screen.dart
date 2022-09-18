@@ -18,16 +18,22 @@ enum FilterOptions {
 
 class ProductOverviewScreen extends StatefulWidget {
   const ProductOverviewScreen({Key? key}) : super(key: key);
+  //
 
   @override
   State<ProductOverviewScreen> createState() => _ProductOverviewScreenState();
 }
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
+  Future<void> _refreshProducts(BuildContext context) async {
+    await Provider.of<ProductProvider>(context, listen: false).fatchAndsetProducts();
+    print('refresh done');
+  }
+
   // final List<Product> loadedProductList = ;
   var _isShowOnlyfavorites = false;
   var _isInit = true;
-  var _isloading = true;
+  var _isloading = false;
   @override
   void initState() {
     //fatch data form firebase
@@ -118,8 +124,11 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ? Center(
               child: CircularProgressIndicator(),
             )
-          : ProductGrid(
-              showFav: _isShowOnlyfavorites,
+          : RefreshIndicator(
+              onRefresh: () => _refreshProducts(context),
+              child: ProductGrid(
+                showFav: _isShowOnlyfavorites,
+              ),
             ),
     );
   }

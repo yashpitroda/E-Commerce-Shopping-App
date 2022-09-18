@@ -6,8 +6,10 @@ class ProductDetailsScreen extends StatelessWidget {
   // const ProductDetailsScreen({Key? key, required this.title}) : super(key: key);
   // final String title;
   static const routeName = '/ProductDetailsScreen';
+  
   @override
   Widget build(BuildContext context) {
+    
     final productId = ModalRoute.of(context)!.settings.arguments as String;
     // final loadedProduct_List =
     //     Provider.of<ProductProvider>(context).items.firstWhere((element) {
@@ -17,6 +19,8 @@ class ProductDetailsScreen extends StatelessWidget {
     final loadedProduct = Provider.of<ProductProvider>(context, listen: false)
         .findById(
             productId); //listen: false -- if our data will not change or update then we will do false
+    
+    
     return Scaffold(
       appBar: AppBar(
         title: Text(loadedProduct.title),

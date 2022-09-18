@@ -37,14 +37,7 @@ class CartScreen extends StatelessWidget {
                 SizedBox(
                   width: 10,
                 ),
-                ElevatedButton(
-                    onPressed: () {
-                      //in method we dont want call lisner //we need to only run method
-                      Provider.of<Order>(context, listen: false).addOrder(
-                          cart.cartItemMap.values.toList(), cart.totalAmount);
-                      cart.clear();
-                    },
-                    child: Text('Order Now')),
+                Orderbutton(cart: cart),
               ],
             ),
           ),
@@ -70,5 +63,45 @@ class CartScreen extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+class Orderbutton extends StatefulWidget {
+  const Orderbutton({
+    Key? key,
+    required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  State<Orderbutton> createState() => _OrderbuttonState();
+}
+
+class _OrderbuttonState extends State<Orderbutton> {
+  var _isloading = false;
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+        onPressed: (widget.cart.totalAmount <= 0 || _isloading)
+            ? null //btn desable
+            : () async {
+                setState(() {
+                  _isloading = true;
+                });
+                //in method we dont want call lisner //we need to only run method
+                await Provider.of<Order>(context, listen: false).addOrder(
+                    widget.cart.cartItemMap.values.toList(),
+                    widget.cart.totalAmount);
+                setState(() {
+                  _isloading = false;
+                });
+                widget.cart.clear();
+              },
+        child: _isloading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : Text('Order Now'));
   }
 }
