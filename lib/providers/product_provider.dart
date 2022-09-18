@@ -1,6 +1,7 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:shop_app/models/http_exception.dart';
 import 'package:shop_app/providers/product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -212,9 +213,72 @@ class ProductProvider with ChangeNotifier {
       print('...');
     }
   }
+//without future --its work proper
+// void deleteProduct(String id)  {
+//     //without firebase
+//     // _items.removeWhere((prod) => prod.id == id);
+//     // notifyListeners();
+//     //withfirebase -- batter way
+//     //statuscode: 200,201 - means every things works
+//     //statuscode:300 - means u are redairected
+//     //statuscode: and above 400 - mean error accor
+//     //in http package -  all get and post request automaticaly throws error  wchen status code is graterthen equals to 400
+//     //means get and post request are throws error is base on statuscode
+//     //but in delete this facality is not avalible -- so we manualy catch error for delete on the bases of statuscode
+//     //in delete : statuscode >=400 : means error occurs
+//     final url = Uri.parse(
+//         // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+//         'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id');
+//     final existingProductIndex =
+//         _items.indexWhere((element) => element.id == id);
+//     dynamic existingProduct =
+//         _items[existingProductIndex]; //we can asign null also
 
-  void deleteProduct(String id) {
-    _items.removeWhere((prod) => prod.id == id);
+//     http.delete(url).then((response) {
+//       print(response.statusCode);
+//       if (response.statusCode >= 400) {
+//         throw HttpException('Could not delete prduct.');
+//       }
+//       existingProduct = null;
+//       print(existingProduct);
+//     }).catchError((_) {
+//       _items.insert(existingProductIndex, existingProduct);
+//       notifyListeners();
+//     });
+//     _items.removeAt(existingProductIndex);
+//     notifyListeners();
+//   }
+
+  Future<void> deleteProduct(String id) async {
+    //without firebase
+    // _items.removeWhere((prod) => prod.id == id);
+    // notifyListeners();
+    //withfirebase -- batter way
+    //statuscode: 200,201 - means every things works
+    //statuscode:300 - means u are redairected
+    //statuscode: and above 400 - mean error accor
+    //in http package -  all get and post request automaticaly throws error  wchen status code is graterthen equals to 400
+    //means get and post request are throws error is base on statuscode
+    //but in delete this facality is not avalible -- so we manualy catch error for delete on the bases of statuscode
+    //in delete : statuscode >=400 : means error occurs
+    final url = Uri.parse(
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+    // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id'); //statusconde above 400
+    final existingProductIndex =
+        _items.indexWhere((element) => element.id == id);
+    dynamic existingProduct =
+        _items[existingProductIndex]; //we can asign null also
+    _items.removeAt(existingProductIndex);
     notifyListeners();
+    final response = await http.delete(url);
+
+    print(response.statusCode);
+    if (response.statusCode >= 400) {
+      _items.insert(existingProductIndex, existingProduct);
+      notifyListeners();
+      throw HttpException('Could not delete prduct.');
+    }
+    existingProduct = null;
+    print(existingProduct);
   }
 }
