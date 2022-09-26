@@ -1,12 +1,16 @@
 // import 'dart:ffi';
 
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app/models/http_exception.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/product.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class ProductProvider with ChangeNotifier {
+  String authToken;
+  ProductProvider(this.authToken, this._items);
   //ChangeNotifier is a widget which astablis comueniication b/w penal with the help of contex
   List<Product> _items = [
     // Product(
@@ -125,7 +129,7 @@ class ProductProvider with ChangeNotifier {
     // final url = Uri.parse(
     //     'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products'); //this time catcherror will run
     final url = Uri.parse(
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json'); //products.json - is a node
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json?auth=$authToken '); //products.json - is a node
     try {
       final response = await http.post(
         url,
@@ -162,8 +166,8 @@ class ProductProvider with ChangeNotifier {
   Future<void> fatchAndsetProducts() async {
     final url = Uri.parse(
         // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
-    try {
+    'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json?auth=$authToken');
+    // try {
     final response = await http.get(url);
     print(response);
     print(response.body);
@@ -185,7 +189,6 @@ class ProductProvider with ChangeNotifier {
     final List<Product> loadedProducts = []; // temp list
     extractedData.forEach((firebaseProKey, prodata) {
       print(firebaseProKey);
-
       loadedProducts.add(
         Product(
             title: prodata['title'],
@@ -197,16 +200,16 @@ class ProductProvider with ChangeNotifier {
             isFavorite: prodata['isFavorite']),
       );
       print(prodata['price'].runtimeType);
-      
+
       print('do');
     });
     print('it 2 hapan');
     _items = loadedProducts;
     notifyListeners();
-    } catch (error) {
-      print(error);
-      throw error;
-    }
+    // } catch (error) {
+    //   print(error);
+    //   throw error;
+    // }
   }
 //whcen firebasekey is null at that time addproduct
 //whcen firebasekey is not null at that time mean item is already exsist at that time updateProduct
@@ -221,7 +224,7 @@ class ProductProvider with ChangeNotifier {
     print('pindex:${productindex}');
     if (productindex >= 0) {
       final url = Uri.parse(
-          'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+          'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
       //patch -- update data
       await http.patch(url,
           body: json.encode({
@@ -285,7 +288,7 @@ class ProductProvider with ChangeNotifier {
     //but in delete this facality is not avalible -- so we manualy catch error for delete on the bases of statuscode
     //in delete : statuscode >=400 : means error occurs
     final url = Uri.parse(
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json?auth=$authToken');
     // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id'); //statusconde above 400
     final existingProductIndex =
         _items.indexWhere((element) => element.id == id);

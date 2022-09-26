@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/providers/auth.dart';
 import 'package:shop_app/providers/cart.dart';
 import 'package:shop_app/providers/order.dart';
 import 'package:shop_app/providers/product_provider.dart';
+import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
 import 'package:shop_app/screens/order_screen.dart';
@@ -44,8 +46,30 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (ctx) => ProductProvider(),
+          create: (ctx) => Auth(),
         ),
+        // ChangeNotifierProvider(
+        //   create: (ctx) => ProductProvider(),
+        // ),
+        // ChangeNotifierProxyProvider<Person, Job>(
+        //   create: (BuildContext context) =>
+        //       Job(Provider.of<Person>(context, listen: false)),
+        //   update: (BuildContext context, Person person, Job job) =>
+        //       Job(person, career: 'Vet'),
+        // ),
+
+        ChangeNotifierProxyProvider<Auth, ProductProvider>(
+          update: (context, authvalue, previousproduct) => ProductProvider(
+            authvalue.token!,
+            previousproduct == null ? [] : previousproduct.items,
+          ),
+          create: (ctx) => ProductProvider('', []),
+        ),
+        // ChangeNotifierProxyProvider<Auth, ProductProvider>(
+        //   create: (context) => ProductProvider(),
+        //   update: (context, authvalue, previousproduct) =>
+        //       ProductProvider(authvalue.token!),
+        // ),
         ChangeNotifierProvider(
           create: (ctx) => Cart(),
         ),
@@ -53,24 +77,28 @@ class MyApp extends StatelessWidget {
           create: (ctx) => Order(),
         ),
       ],
-      child: MaterialApp(
-          title: 'Flutter Demo',
-          theme: ThemeData(
-            primarySwatch: Colors.purple,
-            accentColor: Colors.deepOrange,
-            fontFamily: 'Lato',
-          ),
-          // home: const ProductOverviewScreen(),
-          routes: {
-            '/': (ctx) => ProductOverviewScreen(),
-            ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
-            CartScreen.routeName: (ctx) => CartScreen(),
-            OrdersScreen.routeName: (ctx) => OrdersScreen(),
-            OrdersScreenNewFutureBuilder.routeName: (ctx) =>
-                OrdersScreenNewFutureBuilder(),
-            UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
-            EditProductScreen.routeName: (ctx) => EditProductScreen(),
-          }),
+      child: Consumer<Auth>(
+        builder: (context, authval, _) => MaterialApp(
+            title: 'Flutter Demo',
+            theme: ThemeData(
+              primarySwatch: Colors.purple,
+              accentColor: Colors.deepOrange,
+              fontFamily: 'Lato',
+            ),
+            home: authval.isAuth ? ProductOverviewScreen() : AuthScreen(),
+            // home: ProductOverviewScreen(),
+            routes: {
+              // '/': (ctx) => AuthScreen(),
+              // '/': (ctx) => ProductOverviewScreen(),
+              ProductDetailsScreen.routeName: (ctx) => ProductDetailsScreen(),
+              CartScreen.routeName: (ctx) => CartScreen(),
+              OrdersScreen.routeName: (ctx) => OrdersScreen(),
+              OrdersScreenNewFutureBuilder.routeName: (ctx) =>
+                  OrdersScreenNewFutureBuilder(),
+              UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
+              EditProductScreen.routeName: (ctx) => EditProductScreen(),
+            }),
+      ),
     );
   }
 }

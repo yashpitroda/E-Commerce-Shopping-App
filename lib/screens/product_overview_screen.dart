@@ -18,7 +18,7 @@ enum FilterOptions {
 
 class ProductOverviewScreen extends StatefulWidget {
   const ProductOverviewScreen({Key? key}) : super(key: key);
-  //
+  static const routeName = '/ProductOverviewScreen';
 
   @override
   State<ProductOverviewScreen> createState() => _ProductOverviewScreenState();
@@ -26,7 +26,8 @@ class ProductOverviewScreen extends StatefulWidget {
 
 class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
   Future<void> _refreshProducts(BuildContext context) async {
-    await Provider.of<ProductProvider>(context, listen: false).fatchAndsetProducts();
+    await Provider.of<ProductProvider>(context, listen: false)
+        .fatchAndsetProducts();
     print('refresh done');
   }
 

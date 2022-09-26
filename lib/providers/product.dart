@@ -19,12 +19,13 @@ class Product with ChangeNotifier {
     required this.imageUrl,
     required this.isFavorite,
   });
-  Future<void> toggleFavoriteStatus() async {
+
+  Future<void> toggleFavoriteStatus(String token) async {
     final oldStatusOfFav = isFavorite;
-    isFavorite = !isFavorite; 
+    isFavorite = !isFavorite;
     notifyListeners();
     final url = Uri.parse(
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json');
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id.json?auth=$token');
     // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id');
     //http is only give error response only in get and post method
     //other method like delte patch -- in this method we handle the exseption with the help of statusCode
@@ -44,3 +45,29 @@ class Product with ChangeNotifier {
     }
   }
 }
+//or
+  // Future<void> toggleFavoriteStatus(String token) async {
+  //   final oldStatusOfFav = isFavorite;
+  //   isFavorite = !isFavorite;
+  //   notifyListeners();
+  //   final url = Uri.parse(
+  //       'https://shop-app-f1d6e-default-rtdb.firebaseio.com/userfavrates/$id.json?auth=$token');
+  //   // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products/$id');
+  //   //http is only give error response only in get and post method
+  //   //other method like delte patch  -- in this method we handle the exseption with the help of statusCode
+  //   try {
+  //     final response = await http.put(url,
+  //         body: json.encode(
+  //           isFavorite,
+  //         ));
+  //     if (response.statusCode >= 400) {
+  //       //mean error ocur
+  //       isFavorite = oldStatusOfFav;
+  //       notifyListeners();
+  //     }
+  //   } catch (e) {
+  //     isFavorite = oldStatusOfFav;
+  //     notifyListeners();
+  //   }
+  // }
+  // }

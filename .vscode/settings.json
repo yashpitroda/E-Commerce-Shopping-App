@@ -1,4 +1,4 @@
 {
-  "workbench.colorTheme": "Flutter Dark Theme",
-  "cmake.configureOnOpen": false
+  "cmake.configureOnOpen": false,
+  "terminal.integrated.cursorBlinking": false
 }
