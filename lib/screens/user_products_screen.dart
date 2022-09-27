@@ -19,7 +19,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
 
   Future<void> _refreshProducts(BuildContext context) async {
     await Provider.of<ProductProvider>(context, listen: false)
-        .fatchAndsetProducts();
+        .fatchAndsetProducts(true);
   }
 
   @override
@@ -29,7 +29,7 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
         _isloading = true;
       });
       Provider.of<ProductProvider>(context, listen: false)
-          .fatchAndsetProducts()
+          .fatchAndsetProducts(true)
           .then((_) {
         setState(() {
           _isloading = false;
@@ -42,7 +42,8 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<ProductProvider>(context);
+    // final productsData = Provider.of<ProductProvider>(context);
+    print('rebuilding');
     return Scaffold(
       appBar: AppBar(
         title: const Text('Your Products'),
@@ -56,29 +57,41 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
         ],
       ),
       drawer: AppDrawer(),
-      body: RefreshIndicator(
-        onRefresh: () =>
-            _refreshProducts(context), //it has no argumet but it is future
-        child: (_isloading)
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : Padding(
-                padding: EdgeInsets.all(8),
-                child: ListView.builder(
-                  itemCount: productsData.items.length,
-                  itemBuilder: (_, i) => Column(
-                    children: [
-                      UserProductItem(
-                        productsData.items[i].id!,
-                        productsData.items[i].title,
-                        productsData.items[i].imageUrl,
-                      ),
-                      Divider(),
-                    ],
+      body: FutureBuilder(
+        future: _refreshProducts(context),
+        builder: (ctx, snapshot) =>
+            snapshot.connectionState == ConnectionState.waiting
+                ? Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : RefreshIndicator(
+                    onRefresh: () => _refreshProducts(
+                        context), //it has no argumet but it is future
+                    child: (_isloading)
+                        ? Center(
+                            child: CircularProgressIndicator(),
+                          )
+                        : Consumer<ProductProvider>(
+                            builder: (context, productsData, child) => Padding(
+                                  padding: EdgeInsets.all(8),
+                                  child: ListView.builder(
+                                    itemCount: productsData.items.length,
+                                    itemBuilder: (_, i) => Column(
+                                      children: [
+                                        UserProductItem(
+                                          productsData.items[i].id!,
+                                          productsData.items[i].title,
+                                          productsData.items[i].imageUrl,
+                                        ),
+                                        Divider(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                            child: Center(
+                              child: Text('data did not add yet'),
+                            )),
                   ),
-                ),
-              ),
       ),
     );
   }

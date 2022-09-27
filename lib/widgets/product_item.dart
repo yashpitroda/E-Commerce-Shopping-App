@@ -161,7 +161,8 @@ class ProductItem extends StatelessWidget {
                     : Icons.favorite_border),
                 color: Theme.of(context).accentColor,
                 onPressed: () {
-                  product_at_index.toggleFavoriteStatus(authdata.token!);
+                  product_at_index.toggleFavoriteStatus(
+                      authdata.token!, authdata.userIdByFirebasegetter!);
                 },
               ),
             ),

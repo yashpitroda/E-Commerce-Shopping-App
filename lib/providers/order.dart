@@ -18,6 +18,11 @@ class OrderItem {
 }
 
 class Order with ChangeNotifier {
+  final String authToken;
+  final String userIdByFireBase;
+
+  Order(this.authToken, this.userIdByFireBase, this._ordersList);
+
   List<OrderItem> _ordersList = [];
 
   List<OrderItem> get orders {
@@ -26,7 +31,7 @@ class Order with ChangeNotifier {
 
   Future<void> fatchAndsetOrders() async {
     final url = Uri.parse(
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/Order.json');
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/Order/$userIdByFireBase.json?auth=$authToken');
     final response = await http.get(url);
     print(response.body);
     if (response.body == 'null') {
@@ -63,13 +68,14 @@ class Order with ChangeNotifier {
       },
     );
     // _ordersList = loadedOrderslist;
-    _ordersList = loadedOrderslist.reversed.toList(); //reverse list//last order show frist
+    _ordersList = loadedOrderslist.reversed
+        .toList(); //reverse list//last order show frist
     notifyListeners();
   }
 
   Future<void> addOrder(List<CartItem> cartProducts, double total) async {
     final url = Uri.parse(
-        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/Order.json');
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/Order/$userIdByFireBase.json?auth=$authToken');
     final timestap = DateTime.now();
     final responce = await http.post(url,
         body: json.encode({

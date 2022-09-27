@@ -10,7 +10,8 @@ import 'dart:convert';
 
 class ProductProvider with ChangeNotifier {
   String authToken;
-  ProductProvider(this.authToken, this._items);
+  String useridfromFIrebase;
+  ProductProvider(this.authToken, this._items, this.useridfromFIrebase);
   //ChangeNotifier is a widget which astablis comueniication b/w penal with the help of contex
   List<Product> _items = [
     // Product(
@@ -139,7 +140,8 @@ class ProductProvider with ChangeNotifier {
           'imageUrl': prdct.imageUrl,
           'price': prdct.price,
           'imageUrl': prdct.imageUrl,
-          'isFavorite': prdct.isFavorite,
+          'userCreatorId': useridfromFIrebase,
+          // 'isFavorite': prdct.isFavorite, //bcz we use other node
         }),
       );
       //after taking response
@@ -163,10 +165,13 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<void> fatchAndsetProducts() async {
-    final url = Uri.parse(
+  Future<void> fatchAndsetProducts([bool filterByUser = false]) async {
+    final filterString = (filterByUser)
+        ? 'orderBy="userCreatorId"&equalTo="$useridfromFIrebase"'
+        : "";
+    var url = Uri.parse(
         // 'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json');
-    'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json?auth=$authToken');
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/products.json?auth=$authToken&$filterString');
     // try {
     final response = await http.get(url);
     print(response);
@@ -177,6 +182,11 @@ class ProductProvider with ChangeNotifier {
       print('its products retruns data is not avalible in firebase server');
       return;
     }
+    url = Uri.parse(
+        'https://shop-app-f1d6e-default-rtdb.firebaseio.com/user_Favrates/$useridfromFIrebase.json?auth=$authToken');
+    final favoriteResponse = await http.get(url);
+    final favoriteData = json.decode(favoriteResponse.body);
+
     print(jsonDecode(response.body));
     final extractedData = jsonDecode(response.body) as Map<String, dynamic>;
     //   if (extractedData == null) {
@@ -197,7 +207,9 @@ class ProductProvider with ChangeNotifier {
             // price: double.parse(prodata['price'].toString()) ,
             price: prodata['price'].toDouble(),
             imageUrl: prodata['imageUrl'],
-            isFavorite: prodata['isFavorite']),
+            isFavorite: (favoriteData == null)
+                ? false
+                : favoriteData[firebaseProKey] ?? false),
       );
       print(prodata['price'].runtimeType);
 
