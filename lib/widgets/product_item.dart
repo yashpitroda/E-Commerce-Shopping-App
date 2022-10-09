@@ -148,10 +148,20 @@ class ProductItem extends StatelessWidget {
           );
         },
         child: GridTile(
-          child: Image.network(
-            product_at_index.imageUrl,
-            fit: BoxFit.cover,
+          //when network is slow at that time we show a a image wchich is in asset when network image load then newtwork image show
+          child: Hero(
+            tag: product_at_index.id.toString(),//unique for every iamge 
+            child: FadeInImage(
+              placeholder: AssetImage(
+                  'assets/images/product-placeholder.png'), //it is provider //whcin img load then it show
+              image: NetworkImage(product_at_index.imageUrl), //after this show with aniamtion
+              fit: BoxFit.cover,
+            ),
           ),
+          // child: Image.network(
+          //   product_at_index.imageUrl,
+          //   fit: BoxFit.cover,
+          // ),
           footer: GridTileBar(
             backgroundColor: Colors.black54,
             leading: Consumer<Product>(

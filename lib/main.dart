@@ -117,7 +117,8 @@ class MyApp extends StatelessWidget {
                   OrdersScreenNewFutureBuilder(),
               UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
-            }),
+            }
+            ),
       ),
     );
   }
