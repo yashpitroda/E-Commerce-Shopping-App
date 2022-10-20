@@ -89,8 +89,10 @@ class MyApp extends StatelessWidget {
       ],
       child: Consumer<Auth>(
         builder: (context, authval, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
             title: 'Flutter Demo',
             theme: ThemeData(
+              useMaterial3: true,
               primarySwatch: Colors.purple,
               accentColor: Colors.deepOrange,
               fontFamily: 'Lato',
@@ -117,8 +119,7 @@ class MyApp extends StatelessWidget {
                   OrdersScreenNewFutureBuilder(),
               UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
-            }
-            ),
+            }),
       ),
     );
   }
