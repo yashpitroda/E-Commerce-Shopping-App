@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/screens/loading_screen.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
+import 'package:shop_app/widgets/drawer/custom_drawer.dart';
 
 import '../providers/order.dart';
 import '../providers/product_provider.dart';
@@ -42,13 +44,11 @@ class _OrdersScreenState extends State<OrdersScreen> {
       appBar: AppBar(
         title: Text('Your Orders'),
       ),
-      drawer: AppDrawer(),
+      drawer: CustomDrawer(),
       body: RefreshIndicator(
         onRefresh: () => widget._refreshOrders(context),
         child: (_isloading)
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
+            ? LoadingScreen()
             : ListView.builder(
                 itemCount: orderData.orders.length,
                 itemBuilder: (ctx, i) => OrderItemWidget(orderData.orders[i]),

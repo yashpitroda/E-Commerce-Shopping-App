@@ -13,7 +13,7 @@ import 'package:shop_app/screens/product_details_screen.dart';
 import 'package:shop_app/screens/product_overview_screen.dart';
 import 'package:shop_app/screens/user_products_screen.dart';
 
-import 'screens/splash_screen.dart';
+import 'screens/authanticarion_loading_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -105,8 +105,9 @@ class MyApp extends StatelessWidget {
                     builder: (ctx, authResultSnapshot) =>
                         authResultSnapshot.connectionState ==
                                 ConnectionState.waiting
-                            ? SplashScreen()
+                            ? AuthanticationLoadingScreen()
                             : AuthScreen(),
+                            // : AuthanticationLoadingScreen(),
                   ),
             // home: ProductOverviewScreen(),
             routes: {

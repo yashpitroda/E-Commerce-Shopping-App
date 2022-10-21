@@ -9,7 +9,9 @@ import 'package:shop_app/widgets/product_item.dart';
 // import 'package:shop_app/models/product.dart';
 // import 'package:shop_app/widgets/product_item.dart';
 
+import '../widgets/drawer/custom_drawer.dart';
 import '../widgets/product_grid.dart';
+import 'loading_screen.dart';
 
 enum FilterOptions {
   Favorites,
@@ -120,11 +122,9 @@ class _ProductOverviewScreenState extends State<ProductOverviewScreen> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
+      drawer: CustomDrawer(),
       body: (_isloading)
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? LoadingScreen()
           : RefreshIndicator(
               onRefresh: () => _refreshProducts(context),
               child: ProductGrid(

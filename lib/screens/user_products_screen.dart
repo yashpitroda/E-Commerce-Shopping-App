@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/providers/product_provider.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
+import 'package:shop_app/screens/loading_screen.dart';
+import 'package:shop_app/widgets/drawer/custom_drawer.dart';
 
 import '../widgets/app_drawer.dart';
 import '../widgets/user_product_item.dart';
@@ -56,14 +58,12 @@ class _UserProductsScreenState extends State<UserProductsScreen> {
           ),
         ],
       ),
-      drawer: AppDrawer(),
+      drawer: CustomDrawer(),
       body: FutureBuilder(
         future: _refreshProducts(context),
         builder: (ctx, snapshot) =>
             snapshot.connectionState == ConnectionState.waiting
-                ? Center(
-                    child: CircularProgressIndicator(),
-                  )
+                ? LoadingScreen()
                 : RefreshIndicator(
                     onRefresh: () => _refreshProducts(
                         context), //it has no argumet but it is future
