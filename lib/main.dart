@@ -7,6 +7,7 @@ import 'package:shop_app/providers/product_provider.dart';
 import 'package:shop_app/screens/auth_screen.dart';
 import 'package:shop_app/screens/cart_screen.dart';
 import 'package:shop_app/screens/edit_product_screen.dart';
+import 'package:shop_app/screens/favorite_product_screen.dart';
 import 'package:shop_app/screens/order_screen.dart';
 import 'package:shop_app/screens/order_screen_new_future_builder.dart';
 import 'package:shop_app/screens/product_details_screen.dart';
@@ -93,7 +94,7 @@ class MyApp extends StatelessWidget {
             title: 'Flutter Demo',
             theme: ThemeData(
               useMaterial3: true,
-              primarySwatch: Colors.purple,
+              primarySwatch: Colors.blueGrey,
               accentColor: Colors.deepOrange,
               fontFamily: 'Lato',
             ),
@@ -107,7 +108,7 @@ class MyApp extends StatelessWidget {
                                 ConnectionState.waiting
                             ? AuthanticationLoadingScreen()
                             : AuthScreen(),
-                            // : AuthanticationLoadingScreen(),
+                    // : AuthanticationLoadingScreen(),
                   ),
             // home: ProductOverviewScreen(),
             routes: {
@@ -120,6 +121,7 @@ class MyApp extends StatelessWidget {
                   OrdersScreenNewFutureBuilder(),
               UserProductsScreen.routeName: (ctx) => UserProductsScreen(),
               EditProductScreen.routeName: (ctx) => EditProductScreen(),
+              FavoriteProductScreen.routeName: (ctx) => FavoriteProductScreen(),
             }),
       ),
     );

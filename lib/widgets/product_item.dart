@@ -150,11 +150,12 @@ class ProductItem extends StatelessWidget {
         child: GridTile(
           //when network is slow at that time we show a a image wchich is in asset when network image load then newtwork image show
           child: Hero(
-            tag: product_at_index.id.toString(),//unique for every iamge 
+            tag: product_at_index.id.toString(), //unique for every iamge
             child: FadeInImage(
               placeholder: AssetImage(
                   'assets/images/product-placeholder.png'), //it is provider //whcin img load then it show
-              image: NetworkImage(product_at_index.imageUrl), //after this show with aniamtion
+              image: NetworkImage(
+                  product_at_index.imageUrl), //after this show with aniamtion
               fit: BoxFit.cover,
             ),
           ),
@@ -173,6 +174,17 @@ class ProductItem extends StatelessWidget {
                 onPressed: () {
                   product_at_index.toggleFavoriteStatus(
                       authdata.token!, authdata.userIdByFirebasegetter!);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    duration: Duration(seconds: 2),
+                    content: Text(
+                      product_at_index.isFavorite
+                          ? 'Item - ${product_at_index.title} saved  in favorite list'
+                          : 'Item - ${product_at_index.title} removed from favorite list',
+                      style:
+                          TextStyle(color: Color.fromARGB(255, 255, 255, 255)),
+                    ),
+                    backgroundColor: Theme.of(context).toggleableActiveColor,
+                  ));
                 },
               ),
             ),
@@ -203,6 +215,14 @@ class ProductItem extends StatelessWidget {
                 //     ),
                 //   ),
                 // );
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                  duration: Duration(seconds: 2),
+                  content: Text(
+                    'Item - ${product_at_index.title} added into Cart',
+                    style: TextStyle(color: Colors.black),
+                  ),
+                  backgroundColor: Theme.of(context).focusColor,
+                ));
               },
               color: Theme.of(context).accentColor,
             ),

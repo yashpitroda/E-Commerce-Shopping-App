@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_app/screens/favorite_product_screen.dart';
 import 'package:shop_app/widgets/drawer/custom_list_tile.dart';
 import 'package:shop_app/widgets/drawer/header.dart';
 
@@ -49,6 +50,18 @@ class _CustomDrawerState extends State<CustomDrawer> {
                   isCollapsed: _isCollapsed,
                   icon: Icons.shop_rounded,
                   title: 'All Products',
+                  infoCount: 0,
+                ),
+              ),
+              InkWell(
+                onTap: () {
+                  Navigator.of(context)
+                      .pushReplacementNamed(FavoriteProductScreen.routeName);
+                },
+                child: CustomListTile(
+                  isCollapsed: _isCollapsed,
+                  icon: Icons.favorite,
+                  title: 'Favorite',
                   infoCount: 0,
                 ),
               ),
